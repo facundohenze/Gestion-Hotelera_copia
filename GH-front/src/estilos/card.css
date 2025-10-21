@@ -1,0 +1,52 @@
+.card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    width: 260px;
+    height: 480px;
+    background: #fff;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* espacio controlado entre los elementos */
+}
+
+.card h3 {
+  font-weight: bold;
+  font-size: 20px;
+  margin: 0;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.hotel-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+/* Tarjeta de estado */
+.estado-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: white;
+    text-transform: capitalize;
+    font-size: 0.9rem;
+   /*  margin: 8px 0; */
+}
+
+/* Colores según estado */
+.estado-disponible {
+    background-color: #2ecc71; /* verde */
+}
+
+.estado-ocupada {
+    background-color: #e74c3c; /* rojo */
+}

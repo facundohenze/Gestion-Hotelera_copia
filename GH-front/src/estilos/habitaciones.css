@@ -1,0 +1,97 @@
+/* .habitaciones-container{
+    
+} */
+
+
+
+.volver-btn {
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.volver-btn:hover {
+    background-color: #333;
+}
+
+/* === Layout general con tabs laterales === */
+.tabs-vertical-container {
+    display: flex;
+    align-items: flex-start;
+    background-color: #98bdc3;
+}
+
+/* === Panel lateral (las pestañas) === */
+.tabs-vertical {
+    display: flex;
+    flex-direction: column;
+    width: 17%;
+
+}
+
+.tab-vertical {
+    background: #2f7891;
+    border: none;
+    padding: 12px 16px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    transition: all 0.2s ease;
+    height: 70px;
+    font-size: 17px;
+    
+}
+
+.tab-vertical:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-vertical.activa {
+    background-color: white;
+    color: #2f7891;
+}
+
+/* === Contenido a la derecha === */
+.tab-content-vertical {
+    flex-grow: 1;
+    padding: 20px;
+    background: #fff;
+    border-radius: 0px;
+    min-height: 250px;
+    height: 100vh; /* ocupa toda la pantalla */
+}
+
+/* === Grilla de habitaciones === */
+.habitaciones-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left; /* centra las cards */
+    gap: 40px; /* espacio entre ellas */
+    padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+    .tabs-vertical-container {
+        flex-direction: column;
+    }
+
+    .tabs-vertical {
+        flex-direction: row;
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #ccc;
+        justify-content: space-around;
+    }
+
+    .tab-vertical {
+        flex: 1;
+        text-align: center;
+        margin-bottom: 0;
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "so-login-app",
+  "version": "1.0.0",
+  "description": "Sistema de Login completo con React y Express",
+  "main": "login-back/index.js",
+  "scripts": {
+    "start": "cd login-back && npm start",
+    "dev": "cd login-back && npm run dev",
+    "build": "cd login-front && npm run build",
+    "install-all": "cd login-back && npm install && cd ../login-front && npm install",
+    "deploy": "./deploy.sh"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8"
+  }
+}

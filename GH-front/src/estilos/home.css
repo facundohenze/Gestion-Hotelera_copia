@@ -1,0 +1,92 @@
+/* Contenedor principal */
+.home-container {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Sección usuario logueado */
+.user-box {
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+/* Formulario de búsqueda */
+.search-box {
+  border: 2px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.search-box button:disabled {
+  cursor: not-allowed;
+}
+
+/* estado activo: color distinto mientras está seleccionado (persistente) */
+.search-box button.active {
+  background-color: #0056b3;
+  /* ajusta color */
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* border-color: #234e75; */
+}
+
+/* mantener estilo activo aunque el botón esté deshabilitado */
+.search-box button.active[disabled] {
+  background-color: #2b6cb0;
+  color: #fff;
+  /* border-color: #234e75; */
+  opacity: 1;
+  /* evita que se vea atenuado */
+  cursor: not-allowed;
+}
+
+/* hover sobre activo (opcional) */
+.search-box button.active:hover {
+  background-color: #245a93;
+}
+
+/* estilo normal cuando está deshabilitado y NO activo */
+.search-box button[disabled]:not(.active) {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* evita el marco azul al hacer foco si prefieres */
+.search-box button:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.search-error {
+  color: red;
+  margin-top: 15px;
+}
+
+/* Resultados de cliente */
+.result-box {
+  padding: 20px;
+  border-radius: 8px;
+  
+}
+
+/* Mostrar los resultados en fila */
+.result-box ul {
+  display: flex;
+  gap: 50px;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.result-box ul li {
+  margin: 0;
+  /* eliminar margen por defecto de li */
+}
+
+
+

@@ -1,0 +1,266 @@
+import { useEffect, useState } from "react";
+import "../estilos/home.css";
+
+export function Home() {
+    const [userData, setUserData] = useState(null)
+    const [idCliente, setIdCliente] = useState('')
+    const [clienteData, setClienteData] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [searching, setSearching] = useState(false)
+    const [error, setError] = useState(null)
+    const [searchError, setSearchError] = useState(null)
+    const [categoria, setCategoria] = useState('')
+    const [hoteles, setHoteles] = useState([])
+
+
+    // Cargar datos del usuario al montar el componente
+    useEffect(() => {
+        fetch('/login-data')
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('No autenticado');
+                }
+                return res.json();
+            })
+            .then(response => {
+                if (response.ok && response.datos) {
+                    setUserData(response.datos);
+                }
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                setError('Debe iniciar sesión para acceder');
+                setLoading(false);
+            })
+    }, [])
+
+    // Función para buscar cliente
+    const buscarCliente = async (e) => {
+        e.preventDefault()
+
+        if (!idCliente || idCliente.trim() === '') {
+            setSearchError('Por favor ingrese un ID de cliente')
+            return
+        }
+
+        setSearching(true) // Indica que la búsqueda está en curso
+        setSearchError(null) // Limpia errores previos
+        setClienteData(null) // Limpia datos previos
+
+        try {
+            const response = await fetch(`/api/cliente/${idCliente}`)
+            const data = await response.json()
+
+            if (response.ok && data.success) {
+                setClienteData(data.data)
+            } else {
+                setSearchError(data.message || 'Cliente no encontrado')
+            }
+        } catch (err) {
+            console.error('Error al buscar cliente:', err)
+            setSearchError('Error de conexión al buscar el cliente')
+        } finally {
+            setSearching(false)
+        }
+    }
+
+    // Función para limpiar búsqueda
+    const limpiarBusqueda = () => {
+        setIdCliente('')
+        setClienteData(null)
+        setSearchError(null)
+    }
+
+    if (loading) {
+        return (
+            <div className="home-container">
+                <h1>Home Page</h1>
+                <p>Cargando...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="home-container">
+                <h1>Home Page</h1>
+                <p className="search-error">{error}</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="home-container">
+            <h1>Gestión Hotelera</h1>
+
+            {/* Datos del usuario logueado */}
+            {userData && (
+                <div className="user-box">
+                    <h2>Bienvenido</h2>
+                    <p><strong>Usuario:</strong> {userData.usuario}</p>
+                    <p><strong>Rol:</strong> {userData.rol}</p>
+                </div>
+            )}
+
+            {/* Formulario de búsqueda de cliente */}
+            <div className="search-box">
+                <h2>Buscar Cliente por ID</h2>
+                <form onSubmit={buscarCliente}>
+                    <div>
+                        <label>ID del Cliente:</label>
+                        <input
+                            type="number"
+                            value={idCliente}
+                            onChange={(e) => setIdCliente(e.target.value)}
+                            placeholder="Ingrese el ID del cliente"
+                            disabled={searching}
+                        />
+                    </div>
+                    <div>
+                        <button type="submit" disabled={searching}>
+                            {searching ? 'Buscando...' : 'Buscar'}
+                        </button>
+                        <button type="button" onClick={limpiarBusqueda} disabled={searching}>
+                            Limpiar
+                        </button>
+                    </div>
+                </form>
+
+                {searchError && <p className="search-error">{searchError}</p>}
+            </div>
+
+            {/* Resultados de la búsqueda */}
+            {clienteData && (
+                <div className="result-box">
+                    <h2>Datos del Cliente</h2>
+                    <pre>{JSON.stringify(clienteData, null, 2)}</pre>
+                </div>
+            )}
+        </div>
+    )
+}
+
+
+
+
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { CardHabitaciones } from "../components/CardHabitaciones.jsx";
+import "../estilos/habitaciones.css";
+
+export function Habitaciones() {
+  const [habitaciones, setHabitaciones] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [tabActiva, setTabActiva] = useState("habitaciones");
+  const location = useLocation();
+  const hotel = location.state;
+
+  useEffect(() => {
+    if (hotel?.idHotel) {
+      buscarHabitaciones(hotel.idHotel);
+    }
+  }, [hotel]);
+
+  const buscarHabitaciones = async (idHotel) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/habitaciones/hotel/${idHotel}`);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setHabitaciones(data.data);
+      } else {
+        setError(data.message || "No se pudieron cargar las habitaciones");
+      }
+    } catch (err) {
+      console.error("Error al buscar habitaciones:", err);
+      setError("Error de conexión al buscar habitaciones");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="habitaciones-container">
+      <h1>{hotel?.nombre}</h1>
+      <Link to="/home">
+        <button className="volver-btn">Volver</button>
+      </Link>
+
+      {/* --- Pestañas --- */}
+      <div className="tabs">
+        <button
+          className={tabActiva === "habitaciones" ? "tab activa" : "tab"}
+          onClick={() => setTabActiva("habitaciones")}
+        >
+          🛏️ Habitaciones
+        </button>
+        <button
+          className={tabActiva === "reservas" ? "tab activa" : "tab"}
+          onClick={() => setTabActiva("reservas")}
+        >
+          📅 Reservas
+        </button>
+        <button
+          className={tabActiva === "info" ? "tab activa" : "tab"}
+          onClick={() => setTabActiva("info")}
+        >
+          ℹ️ Información
+        </button>
+      </div>
+
+      {/* --- Contenido de cada pestaña --- */}
+      <div className="tab-content">
+        {tabActiva === "habitaciones" && (
+          <>
+            {loading && <p>Cargando habitaciones...</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {!loading && !error && (
+              <div className="habitaciones-list">
+                {habitaciones.map((h) => (
+                  <CardHabitaciones
+                    key={h.idHabitacion}
+                    imagenUrl={h.imagenUrl || ""}
+                    Habitación={h.numero}
+                    Tipo={h.tipo}
+                    Capacidad={h.capacidad}
+                    Estado={h.estado}
+                    Precio={h.precio}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {tabActiva === "reservas" && (
+          <div className="reservas-tab">
+            <p>Aquí podrías mostrar las reservas activas del hotel.</p>
+          </div>
+        )}
+
+        {tabActiva === "info" && (
+          <div className="info-tab">
+            <p><strong>Dirección:</strong> {hotel?.direccion}</p>
+            <p><strong>Teléfono:</strong> {hotel?.telefono}</p>
+            <p><strong>Email:</strong> {hotel?.email}</p>
+            <p><strong>Categoría:</strong> {hotel?.categoria} ⭐</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
