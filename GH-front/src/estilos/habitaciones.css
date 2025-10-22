@@ -16,7 +16,7 @@
 
 .tabs-vertical-container {
     display: flex;
-    align-items: stretch; /* hace que los hijos se estiren verticalmente */
+    align-items: stretch;
     min-height: 100vh; /* ocupa toda la altura de la ventana */
     background-color: #98bdc3;
 }
@@ -61,15 +61,15 @@
     padding: 20px;
     background: #fff;
     border-radius: 0px;
-    overflow-y: auto; /* si el contenido crece, agrega scroll vertical */
+    overflow-y: auto; /* scroll vertical */
 }
 
 
 .habitaciones-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* centramos las cards */
-    gap: 30px; /* espacio entre ellas */
+    justify-content: center; 
+    gap: 30px;
     padding: 20px 0;
 }
 
