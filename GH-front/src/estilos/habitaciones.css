@@ -1,4 +1,4 @@
-/* === Botón Volver === */
+
 .volver-btn {
     background-color: #555;
     color: white;
@@ -13,7 +13,7 @@
     background-color: #333;
 }
 
-/* === Layout general con tabs laterales === */
+
 .tabs-vertical-container {
     display: flex;
     align-items: stretch; /* hace que los hijos se estiren verticalmente */
@@ -21,7 +21,7 @@
     background-color: #98bdc3;
 }
 
-/* === Panel lateral (las pestañas) === */
+
 .tabs-vertical {
     display: flex;
     flex-direction: column;
@@ -55,7 +55,7 @@
     color: #2f7891;
 }
 
-/* === Contenido a la derecha === */
+
 .tab-content-vertical {
     flex-grow: 1;
     padding: 20px;
@@ -64,7 +64,7 @@
     overflow-y: auto; /* si el contenido crece, agrega scroll vertical */
 }
 
-/* === Grilla de habitaciones === */
+
 .habitaciones-list {
     display: flex;
     flex-wrap: wrap;
@@ -73,7 +73,7 @@
     padding: 20px 0;
 }
 
-/* === Diseño responsive === */
+
 @media (max-width: 768px) {
     .tabs-vertical-container {
         flex-direction: column;
