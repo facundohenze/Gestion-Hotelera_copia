@@ -1,8 +1,3 @@
-/* .habitaciones-container{
-    
-} */
-
-
 
 .volver-btn {
     background-color: #555;
@@ -18,19 +13,22 @@
     background-color: #333;
 }
 
-/* === Layout general con tabs laterales === */
+
 .tabs-vertical-container {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
+    min-height: 100vh; /* ocupa toda la altura de la ventana */
     background-color: #98bdc3;
 }
 
-/* === Panel lateral (las pestañas) === */
+
 .tabs-vertical {
     display: flex;
     flex-direction: column;
     width: 17%;
-
+    background-color: #98bdc3;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
 .tab-vertical {
@@ -45,11 +43,11 @@
     transition: all 0.2s ease;
     height: 70px;
     font-size: 17px;
-    
+    color: white;
 }
 
 .tab-vertical:hover {
-    background-color: #e0e0e0;
+    background-color: #3b8ca6;
 }
 
 .tab-vertical.activa {
@@ -57,24 +55,24 @@
     color: #2f7891;
 }
 
-/* === Contenido a la derecha === */
+
 .tab-content-vertical {
     flex-grow: 1;
     padding: 20px;
     background: #fff;
     border-radius: 0px;
-    min-height: 250px;
-    height: 100vh; /* ocupa toda la pantalla */
+    overflow-y: auto; /* scroll vertical */
 }
 
-/* === Grilla de habitaciones === */
+
 .habitaciones-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: left; /* centra las cards */
-    gap: 40px; /* espacio entre ellas */
+    justify-content: center; 
+    gap: 30px;
     padding: 20px 0;
 }
+
 
 @media (max-width: 768px) {
     .tabs-vertical-container {
@@ -87,11 +85,14 @@
         border-right: none;
         border-bottom: 2px solid #ccc;
         justify-content: space-around;
+        min-height: auto;
+        box-shadow: none;
     }
 
     .tab-vertical {
         flex: 1;
         text-align: center;
         margin-bottom: 0;
+        height: auto;
     }
 }
