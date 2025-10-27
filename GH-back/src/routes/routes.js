@@ -5,7 +5,10 @@ import { fetchCliente } from "../controllers/controllers.js";
 import { fetchHotelPorCategoria } from "../controllers/controllers.js";
 import { fetchTodosHoteles } from "../controllers/controllers.js";
 import { fetchHabitacionesPorHotel } from "../controllers/controllers.js";
-
+import { fetchHotelesMongo } from "../controllers/mongoController.js";
+import { fetchTodosReservas } from "../controllers/controllers.js";
+import { fetchReservasPorHotel } from "../controllers/controllers.js";
+import { crearReserva, actualizarReserva, eliminarReserva } from "../controllers/controllers.js";
 
 const router = Router();
 
@@ -27,6 +30,19 @@ router.get("/todos-hoteles", fetchTodosHoteles);
 // ruta para obtener habitaciones por idHotel
 router.get("/habitaciones/hotel/:idHotel", fetchHabitacionesPorHotel);
 
+// ruta para obtener reservas por idHotel
+router.get("/reservas/hotel/:idHotel", fetchReservasPorHotel);
+
+//ruta para obtener todos las reservas
+router.get("/todas-reservas", fetchTodosReservas);
+
+///CRUD reservas
+router.post("/reservas", crearReserva);
+router.put("/reservas", actualizarReserva);
+router.delete("/reservas/:idReserva", eliminarReserva);
+
+// Ruta para traer hoteles desde MongoDB
+router.get("/mongo/hoteles", fetchHotelesMongo);
 
 export default router;
 

@@ -63,3 +63,60 @@ export async function getHabitacionesPorHotel(idHotel) {
         throw error;
     }
 }
+
+// 🔹 Obtener reservas por hotel
+export async function getReservasPorHotel(idHotel) {
+    try {
+        const [rows] = await pool.query("CALL buscarReservaHotel(?)", [idHotel]);
+        return rows[0];
+    } catch (error) {
+        console.error("❌ Error en getReservasPorHotel:", error);
+        throw error;
+    }
+}
+
+// 🔹 Crear reserva
+export async function createReserva(reserva) {
+    const { idCliente, idHabitacion, fechaEntrada, fechaSalida, cantidadHuesped, estado, total } = reserva;
+    try {
+        const entradaSQL = fechaEntrada ? fechaEntrada.split('T')[0] : null;
+        const salidaSQL = fechaSalida ? fechaSalida.split('T')[0] : null;
+        const [result] = await pool.query(
+            "CALL insertarReserva(?, ?, ?, ?, ?, ?, ?)",
+            [idCliente, idHabitacion, entradaSQL, salidaSQL, cantidadHuesped, estado, total]
+        );
+        return result;
+    } catch (error) {
+        console.error("❌ Error en createReserva:", error);
+        throw error;
+    }
+}
+
+// 🔹 Actualizar reserva
+export async function updateReserva(reserva) {
+    const { idReserva, fechaEntrada, fechaSalida, estado, total } = reserva;
+    try {
+        // ✅ Convertir fechas al formato YYYY-MM-DD
+        const entradaSQL = fechaEntrada ? fechaEntrada.split('T')[0] : null;
+        const salidaSQL = fechaSalida ? fechaSalida.split('T')[0] : null;
+        const [result] = await pool.query(
+            "CALL actualizarReserva(?, ?, ?, ?, ?)",
+            [idReserva, entradaSQL, salidaSQL, estado, total]
+        );
+        return result;
+    } catch (error) {
+        console.error("❌ Error en updateReserva:", error);
+        throw error;
+    }
+}
+
+// 🔹 Eliminar reserva
+export async function deleteReserva(idReserva) {
+    try {
+        const [result] = await pool.query("CALL eliminarReserva(?)", [idReserva]);
+        return result;
+    } catch (error) {
+        console.error("❌ Error en deleteReserva:", error);
+        throw error;
+    }
+}

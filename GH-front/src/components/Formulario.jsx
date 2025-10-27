@@ -9,20 +9,41 @@ export function Formulario({ setUser }) {
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        const response = await fetch('http://localhost:3001/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ usuario, contrasena })
-        })
-        const data = await response.json()
-        if (response.ok && data.ok) {
-            setUser(data.datos)
-            navigate('/home')
-        } else {
-            setError(true)
+        e.preventDefault();
+
+        try {
+            const response = await fetch("http://localhost:3001/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ usuario, contrasena }),
+            });
+
+            const data = await response.json();
+
+            // 🔹 Verificación de éxito
+            if (!response.ok || !data.ok) {
+                throw new Error(data.mensaje || "Credenciales incorrectas");
+            }
+
+            // 🔹 Guardar token y datos de usuario
+            localStorage.setItem("token", data.token);
+
+            // Guarda también los datos decodificados que envía el backend
+            setUser({
+                idUsuario: data.datos.idUsuario,
+                usuario: data.datos.usuario,
+                rol: data.datos.rol,
+            });
+
+            // 🔹 Redirigir al Home
+            navigate("/home");
+        } catch (error) {
+            console.error("Error al iniciar sesión:", error);
+            setError(true);
         }
-    }
+    };
 
     return (
         <section>
@@ -37,7 +58,7 @@ export function Formulario({ setUser }) {
                     value={contrasena} onChange={(e) => setContrasena(e.target.value)}
                 />
                 <button>Login</button>
-                {error && <p style={{color: 'red'}}>Credenciales incorrectas</p>}
+                {error && <p style={{ color: 'red' }}>Credenciales incorrectas</p>}
             </form>
         </section>
     )

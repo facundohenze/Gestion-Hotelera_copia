@@ -9,6 +9,9 @@ import hotelCategoriaRoutes from './routes/routes.js';
 import todosLosHotel from './routes/routes.js';
 import habitacionPorHotel from './routes/routes.js';
 import pool, { testConnection } from './config/db.js';
+import { connectMongo } from "./config/mongo.js";
+import authRoutes from './routes/authRoutes.js';
+import jwt from "jsonwebtoken";
 
 
 dotenv.config();
@@ -23,8 +26,9 @@ app.use(express.json());
 // Servir archivos estáticos del frontend (después del build)
 app.use(express.static(path.join(__dirname, '../login-front/dist')));
 
-// Variable para almacenar los datos del usuario logueado
-let currentUser = null;
+
+// Conexión a MongoDB
+connectMongo();
 
 // Probar conexión a la base de datos al iniciar
 testConnection();
@@ -39,27 +43,38 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ ok: false, mensaje: 'Debe ingresar usuario y contraseña' });
     }
 
-    // Consultar en la base de datos
     const [rows] = await pool.query(
       'SELECT * FROM Usuario WHERE usuario = ? AND contrasena = ?',
       [usuario, contrasena]
     );
 
-    if (rows.length > 0) {
-      // Usuario encontrado
-      const user = rows[0];
-      currentUser = {
-        id: user.idUsuario,
-        usuario: user.usuario,
-        rol: user.rol
-      };
-
-      res.json({ ok: true, datos: currentUser });
-    } else {
-      // Usuario no encontrado o credenciales incorrectas
-      res.status(401).json({ ok: false, mensaje: 'Credenciales incorrectas' });
+    if (rows.length === 0) {
+      return res.status(401).json({ ok: false, mensaje: 'Credenciales incorrectas' });
     }
 
+    const user = rows[0];
+
+    // 🔹 Generar token JWT (válido por 1 hora, por ejemplo)
+    const token = jwt.sign(
+      {
+        idUsuario: user.idUsuario,
+        usuario: user.usuario,
+        rol: user.rol,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.json({
+      ok: true,
+      mensaje: 'Login exitoso',
+      token,
+      datos: {
+        idUsuario: user.idUsuario,
+        usuario: user.usuario,
+        rol: user.rol,
+      },
+    });
   } catch (error) {
     console.error('❌ Error en /login:', error);
     res.status(500).json({ ok: false, mensaje: 'Error en el servidor' });
@@ -67,13 +82,10 @@ app.post('/login', async (req, res) => {
 });
 
 
-// Endpoint para obtener datos del usuario
-app.get('/login-data', (req, res) => {
-  if (currentUser) {
-    res.json({ ok: true, datos: currentUser });
-  } else {
-    res.status(401).json({ ok: false, mensaje: 'No hay usuario logueado' });
-  }
+//Endpoint para obtener datos del usuario autenticado
+app.get('/login-data', verificarAutenticacion, (req, res) => {
+  // req.user viene del jwt.verify() del middleware
+  res.json({ ok: true, datos: req.user });
 });
 
 
@@ -86,19 +98,35 @@ app.post('/logout', (req, res) => {
 
 // Middleware para verificar si el usuario está autenticado
 function verificarAutenticacion(req, res, next) {
-  if (currentUser) {
-    next();
-  } else {
-    res.status(401).json({ ok: false, mensaje: 'No autenticado. Debe iniciar sesión.' });
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) {
+    return res.status(401).json({ ok: false, mensaje: 'Token no proporcionado' });
   }
+
+  const token = authHeader.split(' ')[1];
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ ok: false, mensaje: 'Token inválido o expirado' });
+    }
+    req.user = user; // info del usuario decodificada
+    next();
+  });
 }
 
 
+
+
+
+app.use('/api/auth', authRoutes);
 // ============ RUTAS DE CLIENTES (PROTEGIDAS) ============
-app.use('/api', verificarAutenticacion, clienteRoutes);
-app.use('/api', verificarAutenticacion, hotelCategoriaRoutes);
-app.use('/api', verificarAutenticacion, todosLosHotel);
-app.use('/api', verificarAutenticacion, habitacionPorHotel);
+app.use('/api', verificarAutenticacion, [
+  clienteRoutes,
+  hotelCategoriaRoutes,
+  todosLosHotel,
+  habitacionPorHotel
+]);
+
+
 
 // Ruta de prueba para el servidor
 app.get('/api/test', (req, res) => {

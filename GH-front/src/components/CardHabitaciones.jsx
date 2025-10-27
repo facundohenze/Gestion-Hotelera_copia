@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import "../estilos/card.css";
 
 export const CardHabitaciones = ({
+    idHabitacion,
     imagenUrl,
     Habitación,
     Tipo,
@@ -20,7 +21,8 @@ export const CardHabitaciones = ({
                 ? <img src={imagenUrl} alt={Habitación || 'Habitación'} className="hotel-image" />
                 : <img src="/placeholder-room.png" alt="sin imagen" className="hotel-image" /> /* opcional fallback ?*/
             }
-            <h3>{Habitación}</h3>
+            {/* <p>ID: {idHabitacion}</p> */}
+            <h3>{Habitación} ID: {idHabitacion}</h3>
             <p>Tipo: {Tipo}</p>
             <p>Capacidad: {Capacidad}</p>
             {/* 🔹 Tarjeta de estado con color */}

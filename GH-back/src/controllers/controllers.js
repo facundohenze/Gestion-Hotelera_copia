@@ -1,7 +1,7 @@
 // Controladores: lógica para manejar requests y responses
 
-import { getCliente, getHotelPorCategoria, getTodosHoteles, getHabitacionesPorHotel
- } from "../services/services.js";
+import { getCliente, getHotelPorCategoria, getTodosHoteles, getHabitacionesPorHotel, getReservasPorHotel } from "../services/services.js";
+import { createReserva, updateReserva, deleteReserva } from "../services/services.js";
 
 // obtener un cliente por su id
 export async function fetchCliente(req, res) {
@@ -92,8 +92,9 @@ export async function fetchTodosHoteles(req, res) {
             message: "Error interno del servidor",
             error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
-    }   
+    }
 }
+
 
 // obtener todas las habitaciones de un hotel (por idHotel)
 export async function fetchHabitacionesPorHotel(req, res) {
@@ -119,4 +120,67 @@ export async function fetchHabitacionesPorHotel(req, res) {
         });
     }
 
+}
+
+// obtener todas las reservas de un hotel (por idHotel)
+// ✅ Listar reservas por hotel
+export async function fetchReservasPorHotel(req, res) {
+    try {
+        const idHotel = parseInt(req.params.idHotel, 10);
+        const reservas = await getReservasPorHotel(idHotel);
+        res.json({ success: true, data: reservas });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error al obtener reservas" });
+    }
+}
+
+// obtener todos las reservas
+export async function fetchTodosReservas(req, res) {
+    try {
+        const reservas = await getTodosReservas(); // Llamar al service
+        return res.json({
+            success: true,
+            data: Array.isArray(reservas) ? reservas : []
+        });
+
+    }
+    catch (error) {
+        console.error("❌ Error en fetchTodosReservas:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error interno del servidor",
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+}
+
+// ✅ Crear reserva
+export async function crearReserva(req, res) {
+    try {
+        await createReserva(req.body);
+        res.json({ success: true, message: "Reserva creada correctamente" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error al crear reserva" });
+    }
+}
+
+// ✅ Actualizar reserva
+export async function actualizarReserva(req, res) {
+    try {
+        await updateReserva(req.body);
+        res.json({ success: true, message: "Reserva actualizada correctamente" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error al actualizar reserva" });
+    }
+}
+
+// ✅ Eliminar reserva
+export async function eliminarReserva(req, res) {
+    try {
+        const id = parseInt(req.params.idReserva, 10);
+        await deleteReserva(id);
+        res.json({ success: true, message: "Reserva eliminada correctamente" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error al eliminar reserva" });
+    }
 }

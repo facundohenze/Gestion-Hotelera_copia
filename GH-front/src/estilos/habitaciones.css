@@ -1,4 +1,4 @@
-
+/* === Botón Volver === */
 .volver-btn {
     background-color: #555;
     color: white;
@@ -13,19 +13,19 @@
     background-color: #333;
 }
 
-
+/* === Layout general con tabs laterales === */
 .tabs-vertical-container {
     display: flex;
-    align-items: stretch;
+    align-items: stretch; /* hace que los hijos se estiren verticalmente */
     min-height: 100vh; /* ocupa toda la altura de la ventana */
     background-color: #98bdc3;
 }
 
-
+/* === Panel lateral (las pestañas) === */
 .tabs-vertical {
     display: flex;
     flex-direction: column;
-    width: 17%;
+    width: 160px;
     background-color: #98bdc3;
     padding: 10px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
@@ -55,25 +55,25 @@
     color: #2f7891;
 }
 
-
+/* === Contenido a la derecha === */
 .tab-content-vertical {
     flex-grow: 1;
     padding: 20px;
     background: #fff;
     border-radius: 0px;
-    overflow-y: auto; /* scroll vertical */
+    overflow-y: auto; /* si el contenido crece, agrega scroll vertical */
 }
 
-
+/* === Grilla de habitaciones === */
 .habitaciones-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; 
-    gap: 30px;
+    justify-content: center; /* centramos las cards */
+    gap: 30px; /* espacio entre ellas */
     padding: 20px 0;
 }
 
-
+/* === Diseño responsive === */
 @media (max-width: 768px) {
     .tabs-vertical-container {
         flex-direction: column;
@@ -95,4 +95,101 @@
         margin-bottom: 0;
         height: auto;
     }
+}
+
+.reservas-container {
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 12px;
+}
+
+.reserva-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.reserva-form input,
+.reserva-form select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.tabla-reservas {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.tabla-reservas th,
+.tabla-reservas td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.tabla-reservas button {
+  margin: 0 4px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+.btn-agregar {
+    background-color: #2f7891;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background 0.3s ease;
+}
+
+.btn-agregar:hover {
+    background-color: #246173;
+}
+
+.form-reserva {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin-top: 15px;
+}
+.form-reserva select,
+.form-reserva input {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.form-reserva input:focus {
+    outline: none;
+    border-color: #2f7891;
+}
+
+.btn-guardar {
+    background-color: #3da35a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.btn-guardar:hover {
+    background-color: #2d7d45;
 }

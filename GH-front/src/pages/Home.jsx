@@ -11,10 +11,15 @@ export function Home() {
     const [categoria, setCategoria] = useState('');
     const [hoteles, setHoteles] = useState([]);
     const [botonActivo, setBotonActivo] = useState(null);
-
+    const token = localStorage.getItem('token');
+    const [fuente, setFuente] = useState("mysql"); // indica qué base está activa
 
     useEffect(() => {
-        fetch('/login-data')
+        fetch('/login-data', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
             .then(res => {
                 if (!res.ok) throw new Error('No autenticado');
                 return res.json();
@@ -60,7 +65,13 @@ export function Home() {
 
         // realizar la búsqueda
         try {
-            const response = await fetch(`/api/hoteles?categoria=${encodeURIComponent(categoriaSeleccionada)}`);
+            const response = await fetch(`/api/hoteles?categoria=${encodeURIComponent(categoriaSeleccionada)}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
             const contentType = response.headers.get('content-type') || '';
 
             if (!response.ok) {
@@ -88,13 +99,18 @@ export function Home() {
         }
     };
 
-    const buscarTodosLosHoteles = async () => {
+    const buscarTodosLosHoteles = async (tipo) => {
+        setFuente(tipo);
         setBotonActivo('todos'); // <--- marcar "Todos" como activo
         setSearching(true);
         setSearchError(null);
         setHoteles([]);
         try {
-            const response = await fetch(`/api/todos-hoteles`);
+            const response = await fetch(`/api/todos-hoteles`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
 
             if (!response.ok) {
                 const text = await response.text();
@@ -114,6 +130,49 @@ export function Home() {
             setSearching(false);
         }
     };
+
+    const buscarHotelesMongo = async () => {
+        setFuente("mongo");
+        setBotonActivo("mongo");
+        setSearching(true);
+        setSearchError(null);
+        setHoteles([]);
+
+        try {
+            const response = await fetch(`/api/mongo/hoteles`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`HTTP ${response.status}: ${text}`);
+            }
+
+            const data = await response.json();
+
+            if (data && data.success) {
+                setHoteles(data.data || []);
+            } else {
+                setSearchError(data?.message || 'No se encontraron hoteles en MongoDB');
+            }
+        } catch (err) {
+            console.error('Error al buscar hoteles de Mongo:', err);
+            setSearchError(String(err.message || 'Error de conexión al buscar hoteles de Mongo'));
+        } finally {
+            setSearching(false);
+        }
+    };
+
+    const cerrarSesion = () => {
+        if (window.confirm("¿Seguro que desea cerrar sesión?")) {
+            localStorage.removeItem("token"); // Elimina el token guardado
+            window.location.href = "/"; // Redirige al login
+        }
+    };
+
+
 
     if (loading) {
         return (
@@ -137,6 +196,10 @@ export function Home() {
         <div className="home-container">
             <h1>Gestión Hotelera</h1>
 
+            <div className="header-bar">
+                <button className="btn-logout" onClick={cerrarSesion}>Cerrar sesión</button>
+            </div>
+
             {/* {userData && (
                 <div className="user-box">
                     <h2>Bienvenido</h2>
@@ -159,6 +222,15 @@ export function Home() {
                         >
                             {searching ? 'Buscando...' : 'Todos'}
                         </button>
+                        <button
+                            type="button"
+                            onClick={buscarHotelesMongo}
+                            disabled={searching}
+                            className={botonActivo === 'mongo' ? 'active' : ''}
+                        >
+                            {searching ? 'Buscando...' : 'MongoDB'}
+                        </button>
+
                         {[1, 2, 3, 4, 5].map(n => (
                             <button
                                 key={n}
@@ -178,7 +250,7 @@ export function Home() {
 
             {hoteles.length > 0 ? (
                 <div className="result-box">
-                    <h2>Hoteles encontrados</h2>
+                    {/* <h2>Hoteles encontrados</h2> */}
                     <ul>
                         {hoteles.map((h, i) => (
                             <li key={h.id || i}>
